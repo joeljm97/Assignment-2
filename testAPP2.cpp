@@ -13,6 +13,7 @@ class APP2
 private:
     ifstream fs;
     stringvec::iterator ptr;
+    ofstream pass, fail, abort;
 
     string removeTag(string str)
     {
@@ -53,14 +54,22 @@ private:
     }
     void initializeFiles()
     {
-        ofstream pass("pass.csv"), fail("fail.csv"), abort("abort.csv");
-        pass << string("Date_Time,");
+        pass.open("pass.csv");
+        fail.open("fail.csv");
+        abort.open("abort.csv");
+        pass << string("Date_Time,Log_Location,Parameters\n");
+        fail << string("Date_Time,Log_Location,Parameters,Error_Description\n");
+        abort << string("Date_Time,Log_Location,Parameters,Error_Description\n");
+        pass.close();
+        fail.close();
+        abort.close();
     }
+
     public:void mainFunc() 
     {
         
         string fileLoc(path),line,date="";
-        ofstream pass("pass.csv"), fail("fail.csv"), abort("abort.csv");
+        
         //getline(cin, fileLoc);
         fs.open(fileLoc);
         skip(fs,3);
