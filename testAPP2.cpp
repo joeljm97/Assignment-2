@@ -7,7 +7,7 @@
 using namespace std;
 
 typedef vector<string> stringvec;
-string path = "C:\\Results.html";
+string path = "Results.html";
 class APP2
 {
 private:
@@ -62,12 +62,12 @@ private:
     }
     void initializeFiles()
     {
-        pass.open("pass.csv");
-        fail.open("fail.csv");
-        abort.open("abort.csv");
-        pass << string("Date_Time,Test_Name,Parameters,Log_Location\n");
-        fail << string("Date_Time,Test_Name,Parameters,Log_Location,Error_Description\n");
-        abort << string("Date_Time,Test_Name,Parameters,Log_Location,Error_Description\n");
+        pass.open("pass.txt");
+        fail.open("fail.txt");
+        abort.open("abort.txt");
+        pass << string("Date_Time|Test_Name|Parameters|Log_Location\n");
+        fail << string("Date_Time|Test_Name,Parameters|Log_Location|Error_Description\n");
+        abort << string("Date_Time|Test_Name|Parameters|Log_Location|Error_Description\n");
         pass.close();
         fail.close();
         abort.close();
@@ -78,7 +78,9 @@ private:
         
         string fileLoc(path),line,date="";
         initializeFiles();
-        pass.open("pass.csv",ios::app);
+        pass.open("pass.txt",ios::app);
+        fail.open("fail.txt", ios::app);
+        abort.open("abort.txt", ios::app);
         //getline(cin, fileLoc);
         fs.open(fileLoc);
         skip(fs,3);
@@ -104,16 +106,35 @@ private:
                             getline(fs, line);
                             if (i!=2) 
                             {
-                                line = "," + removeTag(line) ;
+                                line = "|" + removeTag(line) ;
                             }
                             else
                             {
                                 line = removeTag(line);
-                                line = "," +cleanLogLoc(line) ;
+                                line = "|" +cleanLogLoc(line) ;
                             }
                             pass << line;
                         }
                         pass << "\n";
+                    }
+                    else if (line == "FAILED")
+                    {
+                        fail << date;
+                        for (int i = 0; i < 4; i++)
+                        {
+                            getline(fs, line);
+                            if (i != 2)
+                            {
+                                line = "|" + removeTag(line);
+                            }
+                            else
+                            {
+                                line = removeTag(line);
+                                line = "|" + cleanLogLoc(line);
+                            }
+                            fail << line;
+                        }
+                        fail << "\n";
                     }
                     
                 }
