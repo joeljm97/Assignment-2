@@ -1,19 +1,20 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
+#include <map>
 #include<iterator>
 
 using namespace std;
 
-typedef vector<string> stringvec;
+typedef map<string,string> stringmap;
 string path = "Results.html";
 
 class APP2
 {
 private:
     ifstream fs;
-    stringvec::iterator ptr;
+    stringmap m_pass,m_fail,m_abort;
+    
     ofstream pass, fail, abort;
 
     int indexOf(string s, string s1) //get the index position of a character or substring in a String
@@ -87,6 +88,15 @@ private:
         abort.close();
     }
 
+    void map_to_file(stringmap mp, ofstream& fo)
+    {
+        stringmap::reverse_iterator itr;
+        for (itr = mp.rbegin(); itr != mp.rend(); ++itr)
+        {
+            fo << itr->first<< itr->second << '\n';
+        }
+    }
+
     void mainFunc()
     {
 
@@ -106,6 +116,7 @@ private:
         {
             while (getline(fs, line))
             {
+                
                 int linelen = line.length();
                 if (line.find("</table>") < linelen)
                     break;
@@ -114,8 +125,8 @@ private:
                     line = removeTag(line);
                     if (line == "PASSED")
                     {
-                        pass << date;
-                        for (int i = 0; i < 4; i++)
+                        string str = "";
+                        for (int i = 0; i < 3; i++)
                         {
                             getline(fs, line);
                             if (i != 2)
@@ -127,13 +138,13 @@ private:
                                 line = removeTag(line);
                                 line = "," + formatLogLoc(line);
                             }
-                            pass << line;
+                            str = str + line;
                         }
-                        pass << "\n";
+                        m_pass.insert({ date, str });
                     }
                     else if (line == "FAILED")
                     {
-                        fail << date;
+                        string str = "";
                         for (int i = 0; i < 4; i++)
                         {
                             getline(fs, line);
@@ -146,16 +157,41 @@ private:
                             {
                                 line = formatError(line);
                             }
-                            fail << "," << line;
+                            str = str +","+ line;
                         }
-                        fail << "\n";
+                        cout << str<<endl;
+                        m_fail.insert({ date, str });
+                    }
+                    else if (line == "ABORTED")
+                    {
+                        string str = "";
+                        for (int i = 0; i < 4; i++)
+                        {
+                            getline(fs, line);
+                            line = removeTag(line);
+                            if (i == 2)
+                            {
+                                line = formatLogLoc(line);
+                            }
+                            else if (i == 3)
+                            {
+                                line = formatError(line);
+                            }
+                            str = str+ "," + line;
+                        }
+                        m_abort.insert({ date, str });
                     }
 
                 }
                 date = line;
             }
         }
-
+        map_to_file(m_pass, pass);
+        pass.close();
+        map_to_file(m_fail, fail);
+        fail.close();
+        map_to_file(m_abort, abort);
+        abort.close();
     }
 };
 
