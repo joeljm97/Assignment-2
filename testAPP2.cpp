@@ -7,7 +7,6 @@
 using namespace std;
 
 typedef map<string,string> stringmap;
-string path = "Results.html";
 
 class APP2
 {
@@ -100,12 +99,12 @@ private:
     void mainFunc()
     {
 
-        string fileLoc(path), line, date = "";
+        string fileLoc, line, date = "";
         initializeFiles();
         pass.open("pass.csv", ios::app);
         fail.open("fail.csv", ios::app);
         abort.open("abort.csv", ios::app);
-        //getline(cin, fileLoc);
+        getline(cin, fileLoc);
         fs.open(fileLoc);
         skip(fs, 3);
         if (!fs)
