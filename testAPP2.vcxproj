@@ -141,6 +141,12 @@
   <ItemGroup>
     <ClCompile Include="testAPP2.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Results.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="logmanager.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
