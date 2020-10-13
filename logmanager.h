@@ -1,3 +1,6 @@
+#ifndef logmanager
+#define logmanager
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <string>
@@ -82,3 +85,5 @@ void endlog()
     log << "\nEnd Time: " << getTimeStr()<<endl;
     log.close();
 }
+
+#endif

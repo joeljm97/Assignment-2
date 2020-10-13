@@ -13,51 +13,51 @@ typedef map<string,string> stringmap;
 class APP2
 {
 private:
-    ifstream fs;
+    ifstream inputFile;
     stringmap m_pass,m_fail,m_abort;
     
     ofstream pass, fail, abort;
 
-    string removeTag(string str) //gets string in between a <td></td> tag
+    string removeTag(string line) //gets string in between a <td></td> tag
     {
         writetolog(__LINE__, "Entered: " + funcName(__FUNCTION__));
         string::size_type beg, end;
-        string s1;
-        beg = str.find("<td>");
+        string temp_line;
+        beg = line.find("<td>");
         beg = beg + 4;
-        end = str.find("</td>");
+        end = line.find("</td>");
         end = end;
-        s1 = string(&str[beg], &str[end]);
-        writetolog(__LINE__, "Returned value : "+s1+" From " + funcName(__FUNCTION__));
-        return (s1);
+        temp_line = string(&line[beg], &line[end]);
+        writetolog(__LINE__, "Returned value : "+ temp_line +" From " + funcName(__FUNCTION__));
+        return (temp_line);
     }
 
-    string formatLogLoc(string str) //Formats log location string by removing additional <code> tags
+    string formatLogLoc(string line) //Formats log location string by removing additional <code> tags
     {
         writetolog(__LINE__, "Entered: " + funcName(__FUNCTION__));
         string::size_type beg, end;
-        string s1;
-        beg = str.find("file:/");
-        end = str.find("><code>") - 1;
-        s1 = string(&str[beg], &str[end]);
-        writetolog(__LINE__, "Returned value : " + s1 + " From " + funcName(__FUNCTION__));
-        return(s1);
+        string temp_line;
+        beg = line.find("file:/");
+        end = line.find("><code>") - 1;
+        temp_line = string(&line[beg], &line[end]);
+        writetolog(__LINE__, "Returned value : " + temp_line + " From " + funcName(__FUNCTION__));
+        return(temp_line);
     }
 
-    string formatError(string str) //Formats error code so that it can be added in a csv file without issues 
+    string formatError(string line) //Formats error code so that it can be added in a csv file without issues 
     {
         writetolog(__LINE__, "Entered: " + funcName(__FUNCTION__));
-        string s1;
-        for (int i = 0; i < str.length(); i++)
+        string temp_line;
+        for (int i = 0; i < line.length(); i++)
         {
-            if (str[i] != '"')
-                s1 = s1 + str[i];
+            if (line[i] != '"')
+                temp_line = temp_line + line[i];
             else
-                s1 = s1 + "\"\"";
+                temp_line = temp_line + "\"\"";
         }
-        s1 = "\"" + s1 + "\"";
-        writetolog(__LINE__, "Returned value : " + s1 + " From "  + funcName(__FUNCTION__));
-        return (s1);
+        temp_line = "\"" + temp_line + "\"";
+        writetolog(__LINE__, "Returned value : " + temp_line + " From "  + funcName(__FUNCTION__));
+        return (temp_line);
     }
 
     void skip(ifstream& f, int n) //function to skip n number of lines in a file 
@@ -108,16 +108,16 @@ private:
         writetolog(__LINE__, "waiting for user input");
         getline(cin, fileLoc);
         writetolog(__LINE__, "user entered :"+fileLoc);
-        fs.open(fileLoc); //open results.html file
-        skip(fs, 3);
-        while (!fs)
+        inputFile.open(fileLoc); //open results.html file
+        skip(inputFile, 3);
+        while (!inputFile)
         {
             cout << "\n\nUnable to open file\nTry again!!!!!!!\n\n";
             cout << "Enter file Location: ";
             getline(cin, fileLoc);
-            fs.open(fileLoc);
+            inputFile.open(fileLoc);
         }
-        if (!fs) //if file opening fails
+        if (!inputFile) //if file opening fails
         {
             cout << "Failed to open file\n";
         }
@@ -130,7 +130,7 @@ private:
             fail.open("fail.csv", ios::app);
             abort.open("abort.csv", ios::app);
 
-            while (getline(fs, line)) //get each line from Results.html
+            while (getline(inputFile, line)) //get each line from Results.html
             {
                 
                 int linelen = line.length();
@@ -145,7 +145,7 @@ private:
                         string str = "";
                         for (int i = 0; i < 3; i++)
                         {
-                            getline(fs, line);
+                            getline(inputFile, line);
                             if (i != 2)
                             {
                                 line = "," + removeTag(line);
@@ -166,7 +166,7 @@ private:
                         string str = "";
                         for (int i = 0; i < 4; i++)
                         {
-                            getline(fs, line);
+                            getline(inputFile, line);
                             line = removeTag(line);
                             if (i == 2)
                             {
@@ -187,7 +187,7 @@ private:
                         string str = "";
                         for (int i = 0; i < 4; i++)
                         {
-                            getline(fs, line);
+                            getline(inputFile, line);
                             line = removeTag(line);
                             if (i == 2)
                             {
